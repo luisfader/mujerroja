@@ -13,7 +13,8 @@ STORY.es = {
             "Hasta que una mañana de enero se abrió la puerta del aula y entró ella.",
             "Era alta, de porte elegante, con el pelo claro, casi plateado, recogido en un rodete perfecto que dejaba ver un cuello largo y fino. Tenía los ojos de un azul profundo y travieso, los pómulos altos, los labios pintados del mismo rojo que su traje. Un rojo intenso, desafiante, que parecía burlarse del blanco y gris del invierno. Cuando sonrió para saludar, el aula entera se volvió más tibia.",
             "—Me llamo Natalia —dijo, con una voz melodiosa—. Soy moscovita de toda la vida. Quiero perfeccionar mi español.",
-            "Su español ya era bueno. A Luis, en cambio, por un instante le faltó el aire."
+            "Su español ya era bueno. A Luis, en cambio, por un instante le faltó el aire.",
+            "Al terminar la clase, Natalia se quedó junto a la puerta con una pregunta sobre el subjuntivo. Luis le respondió con calma, con un ejemplo inventado solo para ella, y le devolvió la sonrisa."
           ],
           choice: {
             q: "Al terminar la clase, Natalia se queda junto a la puerta con una pregunta sobre el subjuntivo. ¿Qué hace Luis?",
@@ -110,7 +111,8 @@ STORY.es = {
             "—Es que sos un milagro —dijo él, y le besó los dedos.",
             "En una mesa del fondo, tres chicas los miraban. Vika, Alina y Marina. Aquella felicidad era insoportable para ellas. Esa misma noche se juntaron en secreto en un departamento de un barrio lejano. No eran brujas, pero el rencor las transformó. Buscaron rituales oscuros en internet, mezclaron hierbas amargas con cosas robadas de la mochila de Natalia —un lápiz, un pañuelo de lana— y, ciegas de malicia, invocaron una fuerza antigua y torpe: la fuerza de la envidia pura.",
             "Al día siguiente, Luis fue a visitar a Natalia por las calles nevadas. La puerta estaba abierta. El departamento, vacío. En el centro de la mesa del té, donde antes estaba el samovar, había una esfera de cristal perfecta, como una burbuja de hielo imposible de derretir.",
-            "Y adentro, diminuta pero viva, con su vestido rojo, estaba Natalia, golpeando las paredes transparentes con sus manos pequeñas. Su grito silencioso le desgarró el alma."
+            "Y adentro, diminuta pero viva, con su vestido rojo, estaba Natalia, golpeando las paredes transparentes con sus manos pequeñas. Su grito silencioso le desgarró el alma.",
+            "Luis abrazó la esfera contra el pecho y le prometió a Natalia que la iba a sacar de ahí."
           ],
           choice: {
             q: "¿Qué hace Luis?",
