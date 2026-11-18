@@ -2,7 +2,7 @@
 
 Novela-juego de **Robert Fader**, en español y en ruso. Solo para mayores de 18 años.
 
-Leé cada capítulo, elegí el camino correcto y superá un juego distinto para desbloquear el siguiente.
+La novela se lee de corrido: todos los capítulos están abiertos, uno detrás del otro. Los 10 juegos están en una sección aparte («Juegos») y son opcionales.
 
 | Cap. | Título | Juego |
 |---|---|---|
@@ -20,9 +20,9 @@ Leé cada capítulo, elegí el camino correcto y superá un juego distinto para 
 
 ## Archivos
 
-- `js/story-es.js`, `js/story-ru.js`: el texto de la novela, con las elecciones de cada capítulo.
+- `js/story-es.js`, `js/story-ru.js`: el texto de la novela (las elecciones que quedan en el archivo ya no se muestran).
 - `js/ui.js`: los textos de la interfaz y el contenido de los juegos (palabras, verdadero/falso, preguntas).
 - `js/games.js`: los 10 minijuegos.
-- `js/app.js`: la navegación y el progreso, que se guarda en el navegador.
+- `js/app.js`: la navegación entre capítulos y la sección de juegos (los juegos ganados se guardan en el navegador).
 
 Es un sitio estático: se publica con GitHub Pages desde la rama `main`.

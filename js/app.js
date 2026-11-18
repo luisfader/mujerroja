@@ -1,6 +1,6 @@
 (function () {
   const KEY = "mujerroja.v1";
-  let S = { lang: "es", adult: false, unlocked: 0, done: [] };
+  let S = { lang: "es", adult: false, done: [] };
   try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } };
 
@@ -23,16 +23,16 @@
     render();
   }
   document.querySelectorAll(".lang").forEach(b => b.onclick = () => setLang(b.dataset.lang));
-  btnBack.onclick = () => go({ name: "menu" });
+  btnBack.onclick = () => go({ name: (view.name === "game" || view.name === "win") ? "games" : "menu" });
 
   function go(v) { view = v; render(); window.scrollTo(0, 0); }
 
   function render() {
     if (destroyGame) { destroyGame(); destroyGame = null; }
-    btnBack.textContent = U().back;
+    btnBack.textContent = (view.name === "game" || view.name === "win") ? U().backGames : U().back;
     btnBack.classList.toggle("hidden", view.name === "cover" || view.name === "menu");
     app.innerHTML = "";
-    ({ cover, menu, chapter, game, win, epilogue })[view.name]();
+    ({ cover, menu, games, chapter, game, win, epilogue })[view.name]();
   }
 
   const ART = '<svg viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="">' +
@@ -80,25 +80,37 @@
     const h = document.createElement("h2"); h.className = "sec"; h.textContent = u.chapters; app.appendChild(h);
     const list = document.createElement("div"); list.className = "list";
     t.chapters.forEach((c, i) => {
-      const locked = i > S.unlocked, done = S.done.includes(i);
-      const b = document.createElement("button");
-      b.className = "item" + (locked ? " locked" : "") + (done ? " done" : "");
-      b.innerHTML = '<span class="n">' + (i + 1) + '</span><span class="t"><b>' + esc(c.title) + '</b><small>' +
-        (locked ? "🔒 " + u.locked : "🎮 " + u.games[i].name + (done ? " · ✓ " + u.passed : "")) + '</small></span>';
-      if (!locked) b.onclick = () => go({ name: "chapter", i });
+      const b = document.createElement("button"); b.className = "item";
+      b.innerHTML = '<span class="n">' + (i + 1) + '</span><span class="t"><b>' + esc(c.title) + '</b></span>';
+      b.onclick = () => go({ name: "chapter", i });
       list.appendChild(b);
     });
-    const allDone = S.done.includes(t.chapters.length - 1);
-    const e = document.createElement("button");
-    e.className = "item" + (allDone ? " done" : " locked");
-    e.innerHTML = '<span class="n">✦</span><span class="t"><b>' + esc(t.epilogue.title) + '</b><small>' + (allDone ? "" : "🔒 " + u.locked) + '</small></span>';
-    if (allDone) e.onclick = () => go({ name: "epilogue" });
+    const e = document.createElement("button"); e.className = "item";
+    e.innerHTML = '<span class="n">✦</span><span class="t"><b>' + esc(t.epilogue.title) + '</b></span>';
+    e.onclick = () => go({ name: "epilogue" });
     list.appendChild(e);
     app.appendChild(list);
-    const r = document.createElement("div"); r.className = "reset";
-    const rb = document.createElement("button"); rb.textContent = u.reset;
-    rb.onclick = () => { if (confirm(u.resetAsk)) { S.unlocked = 0; S.done = []; save(); render(); } };
-    r.appendChild(rb); app.appendChild(r);
+    const g = document.createElement("div"); g.className = "center"; g.style.margin = "28px 0 10px";
+    const gb = document.createElement("button"); gb.className = "btn outline"; gb.textContent = u.toGames;
+    gb.onclick = () => go({ name: "games" });
+    g.appendChild(gb); app.appendChild(g);
+  }
+
+  function games() {
+    if (!S.adult) return go({ name: "cover" });
+    const u = U();
+    const h = document.createElement("h2"); h.className = "sec"; h.textContent = u.gamesTitle; app.appendChild(h);
+    const p = document.createElement("p"); p.className = "center"; p.style.color = "var(--muted)"; p.textContent = u.gamesSub; app.appendChild(p);
+    const list = document.createElement("div"); list.className = "list";
+    u.games.forEach((gm, i) => {
+      const done = S.done.includes(i);
+      const b = document.createElement("button"); b.className = "item" + (done ? " done" : "");
+      b.innerHTML = '<span class="n">' + (i + 1) + '</span><span class="t"><b>' + esc(gm.name) + '</b><small>' +
+        u.chapter + ' ' + (i + 1) + (done ? " · ✓ " + u.passed : "") + '</small></span>';
+      b.onclick = () => go({ name: "game", i });
+      list.appendChild(b);
+    });
+    app.appendChild(list);
   }
 
   function prose(ps) {
@@ -108,54 +120,17 @@
   }
 
   function chapter() {
-    const i = view.i, c = T().chapters[i], u = U();
+    const i = view.i, t = T(), c = t.chapters[i], u = U(), last = i === t.chapters.length - 1;
     const head = document.createElement("div"); head.className = "chap-head";
     head.innerHTML = '<div class="k">' + u.chapter + ' ' + (i + 1) + '</div><h2>' + esc(c.title) + '</h2><div class="orn">❦</div>';
     app.appendChild(head);
-    const body = document.createElement("div"); app.appendChild(body);
-    function showPart(k) {
-      const part = c.parts[k];
-      const wrap = document.createElement("div"); wrap.className = "part";
-      wrap.appendChild(prose(part.p));
-      body.appendChild(wrap);
-      if (part.choice) {
-        const box = document.createElement("div"); box.className = "choice";
-        box.innerHTML = '<div class="q">' + esc(part.choice.q) + '</div>';
-        const opts = [];
-        part.choice.opts.forEach(o => {
-          const b = document.createElement("button"); b.className = "opt"; b.textContent = o.t; opts.push(b);
-          b.onclick = () => {
-            box.querySelectorAll(".fail").forEach(f => f.remove());
-            if (o.ok) {
-              opts.forEach(x => { x.disabled = true; if (x !== b) x.style.display = "none"; });
-              b.classList.add("chosen");
-              next(k + 1);
-            } else {
-              opts.forEach(x => x.disabled = true);
-              const f = document.createElement("div"); f.className = "fail";
-              f.innerHTML = "<b>" + u.wrong + "</b>";
-              const p = document.createElement("p"); p.textContent = o.fail; f.appendChild(p);
-              const rb = document.createElement("button"); rb.className = "btn outline"; rb.textContent = u.retry;
-              rb.onclick = () => { f.remove(); opts.forEach(x => x.disabled = false); };
-              f.appendChild(rb); box.appendChild(f);
-              f.scrollIntoView({ behavior: "smooth", block: "nearest" });
-            }
-          };
-          box.appendChild(b);
-        });
-        wrap.appendChild(box);
-      } else next(k + 1);
-      if (k > 0) wrap.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    function next(k) {
-      if (k < c.parts.length) return showPart(k);
-      const g = document.createElement("div"); g.className = "gate part";
-      g.innerHTML = '<div class="orn" style="color:var(--red2)">❦ ❦ ❦</div><div class="gname">🎮 ' + esc(u.games[i].name) + '</div>';
-      const b = document.createElement("button"); b.className = "btn gold"; b.textContent = u.toGame;
-      b.onclick = () => go({ name: "game", i });
-      g.appendChild(b); body.appendChild(g);
-    }
-    showPart(0);
+    c.parts.forEach(part => { const p = prose(part.p); p.classList.add("part"); app.appendChild(p); });
+    const g = document.createElement("div"); g.className = "gate part";
+    g.innerHTML = '<div class="orn" style="color:var(--red2)">❦ ❦ ❦</div>';
+    const b = document.createElement("button"); b.className = "btn gold";
+    b.textContent = last ? u.toEpilogue : u.winNext;
+    b.onclick = () => go(last ? { name: "epilogue" } : { name: "chapter", i: i + 1 });
+    g.appendChild(b); app.appendChild(g);
   }
 
   function game() {
@@ -167,19 +142,18 @@
     destroyGame = Games[i](stage, u, () => {
       if (view.name !== "game" || view.i !== i) return;
       if (!S.done.includes(i)) S.done.push(i);
-      S.unlocked = Math.max(S.unlocked, Math.min(i + 1, T().chapters.length - 1));
       save();
       go({ name: "win", i });
     });
   }
 
   function win() {
-    const i = view.i, u = U(), last = i === T().chapters.length - 1;
+    const i = view.i, u = U();
     const d = document.createElement("div"); d.className = "win";
     d.innerHTML = '<div class="rose">🌹</div><div class="big">' + u.winTitle + '</div><p class="how">' + esc(u.games[i].name) + ' ✓</p>';
     const b = document.createElement("button"); b.className = "btn gold";
-    b.textContent = last ? u.toEpilogue : u.winNext;
-    b.onclick = () => go(last ? { name: "epilogue" } : { name: "chapter", i: i + 1 });
+    b.textContent = u.winBack;
+    b.onclick = () => go({ name: "games" });
     d.appendChild(b); app.appendChild(d);
   }
 

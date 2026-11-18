@@ -11,7 +11,7 @@ window.UI = {
     wrong: "Este camino no lleva a ninguna parte…",
     retry: "Volver a elegir",
     toGame: "Pasar de nivel",
-    winTitle: "¡Nivel superado!",
+    winTitle: "¡Ganaste!",
     winNext: "Siguiente capítulo",
     toEpilogue: "Leer el epílogo",
     lose: "¡Uy! Probá otra vez.",
@@ -27,7 +27,12 @@ window.UI = {
     lives: "Vidas",
     time: "Tiempo",
     moves: "Movimientos",
-    intro: "Leé, elegí el camino correcto y superá un juego distinto al final de cada capítulo para desbloquear el siguiente.",
+    intro: "Leé la novela de corrido, capítulo tras capítulo. Los juegos están aparte, por si querés jugar.",
+    gamesTitle: "Juegos",
+    gamesSub: "Diez juegos inspirados en la novela. Son opcionales: no hace falta jugarlos para leer.",
+    toGames: "🎮 Juegos",
+    backGames: "← Juegos",
+    winBack: "Volver a los juegos",
     games: [
       { name: "La carrera de las sonrisas", how: "Llevá a Luis hasta la puerta roja del aula. Juntá sonrisas, saltá sobre los lápices rojos (los errores) y no te caigas entre los libros. Botones ◀ ▶ y ⤒ (o flechas y espacio)." },
       { name: "Tetris del samovar", how: "Completá 4 líneas con las piezas de porcelana. ◀ ▶ mover, ⟳ girar, ▼ bajar, ⤓ soltar." },
@@ -64,8 +69,8 @@ window.UI = {
       "Natalia florece cuando la aman. ¿Creés que el amor puede transformar a una persona?",
       "En el lugar de Luis, ¿qué habrías hecho al final? ¿Por qué?"
     ],
-    reflectNeed: "Respondé al menos 3 preguntas para continuar.",
-    reflectDone: "Ir al final"
+    reflectNeed: "Respondé al menos 3 preguntas para terminar.",
+    reflectDone: "Terminar"
   },
   ru: {
     adult: "В этом романе-игре есть эротические сцены. Только для лиц старше 18 лет.",
@@ -79,7 +84,7 @@ window.UI = {
     wrong: "Этот путь никуда не ведёт…",
     retry: "Выбрать снова",
     toGame: "Пройти уровень",
-    winTitle: "Уровень пройден!",
+    winTitle: "Победа!",
     winNext: "Следующая глава",
     toEpilogue: "Читать эпилог",
     lose: "Ой! Попробуй ещё раз.",
@@ -95,7 +100,12 @@ window.UI = {
     lives: "Жизни",
     time: "Время",
     moves: "Ходы",
-    intro: "Читай, выбирай верный путь и проходи новую игру в конце каждой главы, чтобы открыть следующую.",
+    intro: "Читай роман подряд, глава за главой. Игры — отдельно, если захочется поиграть.",
+    gamesTitle: "Игры",
+    gamesSub: "Десять игр по мотивам романа. Они необязательны: чтобы читать, играть не нужно.",
+    toGames: "🎮 Игры",
+    backGames: "← Игры",
+    winBack: "Вернуться к играм",
     games: [
       { name: "Бег за улыбками", how: "Доведи Луиса до красной двери аудитории. Собирай улыбки, прыгай на красные карандаши (ошибки) и не упади между книгами. Кнопки ◀ ▶ и ⤒ (или стрелки и пробел)." },
       { name: "Тетрис самовара", how: "Собери 4 линии из фарфоровых фигур. ◀ ▶ двигать, ⟳ повернуть, ▼ вниз, ⤓ уронить." },
@@ -132,7 +142,7 @@ window.UI = {
       "Наталья расцветает, когда её любят. Веришь ли ты, что любовь может преобразить человека?",
       "Что бы ты сделал(а) в финале на месте Луиса? Почему?"
     ],
-    reflectNeed: "Ответь хотя бы на 3 вопроса, чтобы продолжить.",
-    reflectDone: "К финалу"
+    reflectNeed: "Ответь хотя бы на 3 вопроса, чтобы закончить.",
+    reflectDone: "Готово"
   }
 };
