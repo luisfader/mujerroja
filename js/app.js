@@ -1,6 +1,7 @@
 (function () {
   const KEY = "mujerroja.v1";
-  let S = { lang: "es", adult: false, done: [] };
+  let S = { lang: "es", adult: false, done: [], fs: 2, theme: "light" };
+  const SIZES = [17, 19, 21, 23, 26, 29, 32];
   try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } };
 
@@ -20,9 +21,28 @@
     document.querySelectorAll(".lang").forEach(b => b.classList.toggle("on", b.dataset.lang === l));
     brand.textContent = T().title;
     document.title = T().title + " · " + T().subtitle;
+    applyLook();
     render();
   }
   document.querySelectorAll(".lang").forEach(b => b.onclick = () => setLang(b.dataset.lang));
+
+  const fsDown = document.getElementById("fsDown"), fsUp = document.getElementById("fsUp"), btnTheme = document.getElementById("theme");
+  function applyLook() {
+    S.fs = Math.max(0, Math.min(SIZES.length - 1, S.fs | 0));
+    document.documentElement.style.fontSize = SIZES[S.fs] + "px";
+    document.documentElement.dataset.theme = S.theme === "dark" ? "dark" : "light";
+    const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = S.theme === "dark" ? "#14161c" : "#f3ece0";
+    fsDown.disabled = S.fs === 0; fsUp.disabled = S.fs === SIZES.length - 1;
+    fsDown.style.opacity = fsDown.disabled ? .4 : 1; fsUp.style.opacity = fsUp.disabled ? .4 : 1;
+    const u = U();
+    fsDown.title = u.smaller; fsDown.setAttribute("aria-label", u.smaller);
+    fsUp.title = u.bigger; fsUp.setAttribute("aria-label", u.bigger);
+    const tl = S.theme === "dark" ? u.themeLight : u.themeDark;
+    btnTheme.textContent = S.theme === "dark" ? "☀" : "☾"; btnTheme.title = tl; btnTheme.setAttribute("aria-label", tl);
+  }
+  fsDown.onclick = () => { S.fs--; save(); applyLook(); };
+  fsUp.onclick = () => { S.fs++; save(); applyLook(); };
+  btnTheme.onclick = () => { S.theme = S.theme === "dark" ? "light" : "dark"; save(); applyLook(); };
   btnBack.onclick = () => go({ name: (view.name === "game" || view.name === "win") ? "games" : "menu" });
 
   function go(v) { view = v; render(); window.scrollTo(0, 0); }
@@ -32,6 +52,7 @@
     btnBack.textContent = (view.name === "game" || view.name === "win") ? U().backGames : U().back;
     btnBack.classList.toggle("hidden", view.name === "cover" || view.name === "menu");
     app.innerHTML = "";
+    document.body.classList.toggle("on-cover", view.name === "cover");
     ({ cover, menu, games, chapter, game, win, epilogue })[view.name]();
   }
 
@@ -85,7 +106,7 @@
       b.onclick = () => go({ name: "chapter", i });
       list.appendChild(b);
     });
-    const e = document.createElement("button"); e.className = "item";
+    const e = document.createElement("button"); e.className = "item last";
     e.innerHTML = '<span class="n">✦</span><span class="t"><b>' + esc(t.epilogue.title) + '</b></span>';
     e.onclick = () => go({ name: "epilogue" });
     list.appendChild(e);
@@ -100,7 +121,7 @@
     if (!S.adult) return go({ name: "cover" });
     const u = U();
     const h = document.createElement("h2"); h.className = "sec"; h.textContent = u.gamesTitle; app.appendChild(h);
-    const p = document.createElement("p"); p.className = "center"; p.style.color = "var(--muted)"; p.textContent = u.gamesSub; app.appendChild(p);
+    const p = document.createElement("p"); p.className = "sub-note"; p.textContent = u.gamesSub; app.appendChild(p);
     const list = document.createElement("div"); list.className = "list";
     u.games.forEach((gm, i) => {
       const done = S.done.includes(i);
@@ -120,17 +141,24 @@
   }
 
   function chapter() {
-    const i = view.i, t = T(), c = t.chapters[i], u = U(), last = i === t.chapters.length - 1;
+    const i = view.i, t = T(), c = t.chapters[i], u = U(), n = t.chapters.length, last = i === n - 1;
+    const page = document.createElement("article"); page.className = "page";
     const head = document.createElement("div"); head.className = "chap-head";
-    head.innerHTML = '<div class="k">' + u.chapter + ' ' + (i + 1) + '</div><h2>' + esc(c.title) + '</h2><div class="orn">❦</div>';
-    app.appendChild(head);
-    c.parts.forEach(part => { const p = prose(part.p); p.classList.add("part"); app.appendChild(p); });
-    const g = document.createElement("div"); g.className = "gate part";
-    g.innerHTML = '<div class="orn" style="color:var(--red2)">❦ ❦ ❦</div>';
-    const b = document.createElement("button"); b.className = "btn gold";
+    head.innerHTML = '<div class="k">' + u.chapter + ' ' + (i + 1) + ' ' + u.of + ' ' + n + '</div><h2>' + esc(c.title) + '</h2><div class="orn">❦</div>';
+    page.appendChild(head);
+    c.parts.forEach((part, k) => { const p = prose(part.p); p.classList.add("part"); if (k === 0) p.classList.add("first"); page.appendChild(p); });
+    const g = document.createElement("div"); g.className = "gate";
+    g.innerHTML = '<div class="orn">❦ ❦ ❦</div>';
+    const nav = document.createElement("div"); nav.className = "nav";
+    if (i > 0) {
+      const pb = document.createElement("button"); pb.className = "btn outline"; pb.textContent = u.prev;
+      pb.onclick = () => go({ name: "chapter", i: i - 1 }); nav.appendChild(pb);
+    }
+    const b = document.createElement("button"); b.className = "btn";
     b.textContent = last ? u.toEpilogue : u.winNext;
     b.onclick = () => go(last ? { name: "epilogue" } : { name: "chapter", i: i + 1 });
-    g.appendChild(b); app.appendChild(g);
+    nav.appendChild(b); g.appendChild(nav); page.appendChild(g);
+    app.appendChild(page);
   }
 
   function game() {
@@ -158,13 +186,21 @@
   }
 
   function epilogue() {
-    const e = T().epilogue;
+    const t = T(), e = t.epilogue, u = U();
+    const page = document.createElement("article"); page.className = "page";
     const head = document.createElement("div"); head.className = "chap-head";
     head.innerHTML = '<div class="orn">✦</div><h2>' + esc(e.title) + '</h2><div class="orn">❦</div>';
-    app.appendChild(head);
-    const p = prose(e.p); p.classList.add("part"); app.appendChild(p);
-    const end = document.createElement("div"); end.className = "end"; end.textContent = U().theEnd; app.appendChild(end);
-    const by = document.createElement("p"); by.className = "center"; by.style.color = "var(--muted)"; by.textContent = "— " + T().author + " —"; app.appendChild(by);
+    page.appendChild(head);
+    const p = prose(e.p); p.classList.add("part", "first"); page.appendChild(p);
+    const end = document.createElement("div"); end.className = "end"; end.textContent = u.theEnd; page.appendChild(end);
+    const by = document.createElement("p"); by.className = "center"; by.style.color = "var(--muted)"; by.textContent = "— " + t.author + " —"; page.appendChild(by);
+    const nav = document.createElement("div"); nav.className = "nav"; nav.style.marginTop = "24px";
+    const pb = document.createElement("button"); pb.className = "btn outline"; pb.textContent = u.prev;
+    pb.onclick = () => go({ name: "chapter", i: t.chapters.length - 1 });
+    const mb = document.createElement("button"); mb.className = "btn"; mb.textContent = u.chapters;
+    mb.onclick = () => go({ name: "menu" });
+    nav.append(pb, mb); page.appendChild(nav);
+    app.appendChild(page);
   }
 
   // nieve de fondo

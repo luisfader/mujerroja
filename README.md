@@ -4,6 +4,8 @@ Novela-juego de **Robert Fader**, en español y en ruso. Solo para mayores de 18
 
 La novela se lee de corrido: todos los capítulos están abiertos, uno detrás del otro. Los 10 juegos están en una sección aparte («Juegos») y son opcionales.
 
+El diseño está pensado para leer cómodo: letra grande y contrastada, botones **A− / A+** para agrandar o achicar la letra, y modo día (papel) o modo noche (☾ / ☀). La elección se guarda en el navegador.
+
 | Cap. | Título | Juego |
 |---|---|---|
 | 1 | La sonrisa inesperada | Plataformas (estilo Super Mario) |
